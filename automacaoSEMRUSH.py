@@ -1,6 +1,7 @@
 # UTILIZANDO VERSAO CHROME 127
 # pip install selenium pandas openpyxl
 
+
 try: # Tenta importar as bibliotecas necessárias
     import os  # Biblioteca para manipulação do sistema operacional
     import time  # Biblioteca para manipulação de tempo e pausas
@@ -26,7 +27,8 @@ def configure_browser(download_dir, headless=False):
     chrome_options.add_argument("--start-maximized")
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--window-size=1366,720")
-    #chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--log-level=3")  # Minimiza os logs, 3 corresponde a 'FATAL' (apenas erros críticos), assim o modo headlessn spamma informação
+    chrome_options.add_argument("--headless") # Modo headless
         
     chrome_options.add_experimental_option("prefs", {
         "download.default_directory": download_dir,
@@ -425,7 +427,7 @@ def baixar_TaVisitasSite(driver, domainbg, domainlp, domainin, domainses, domain
         # Esperar e clicar no botão "Exportar" específico
         print("Esperando botão 'Exportar' aparecer...")
         export_button = WebDriverWait(driver, 60).until(
-            EC.element_to_be_clickable((By.XPATH, '//button[@data-testid="export-trigger" and .//span[text()="Exportar"] and @data-ui-name="DropdownMenu.Trigger"]'))
+            EC.element_to_be_clickable((By.XPATH, '//button[@data-testid="export-trigger" and contains(@class, "___SBoxInline_orfji_gg_") and .//span[text()="Exportar"]]'))
         )
         driver.execute_script("arguments[0].click();", export_button)
         print("Botão 'Exportar' clicado.")
@@ -873,10 +875,10 @@ def main():
         personagens = 'ARIEL,BRANCA DE NEVE,PATRULHA CANINA,CARROS,CAPITAO AMERICA,FROZEN,FUTEBOL,DINOSSAURO,HOMEM ARANHA,MARIE,MICKEY,MINNIE,MOANA,PRINCESAS,PETS,REI LEAO,SPIDEY,STITCH,TOY STORY,UNICORNIO,VINGADORES,FLAMENGO,POP FUN,ENALDINHO,REBECCA BONBON,CINDERELA,JASMINE,SONIC,PEPPA PIG,ROBLOX,MINECRAFT,POCOYO,GALINHA PINTADINHA,MINIONS,BABY SHARK,MORANGUINHO,BLUEY,SUPER MAN,BATMAN,ONE PIECE,LUCAS NETO,LULUCA,PANTERA NEGRA,PRINCESA SOFIA,BOLOFOFOS,HARRY POTTER,NARUTO,VASCO,BOTAFOGO,FLUMINENSE,CORINTHIANS,PALMEIRAS,SÃO PAULO,RB BRAGANTINO,ATLÉTICO,CRUZEIRO,INTERNACIONAL,GRÊMIO'
         personagens2 = 'SANTOS,MONICA,TURMA DA MONICA,WANDINHA,PJ MASK,PLAYSTATION,DORA AVENTUREIRA,BOB ESPONJA,GATO GALÁCTICO,MARIA CLARA E JP,FREE FIRE,POKEMON,STRANGER THINGS,SUPER MARIO,MARIO,URSINHOS CARINHOSOS,COCOMELON,AUTHENTIC GAMES,MUNDO BITA,PKXD,MY LITTLE PONY,BABY ALIVE,AMONG US,BARBIE,LOL,HOT WHEELS,FISHER PRICE,POLLY POCKET,MR POTATO HEAD,PLAY DOH,TARTARUGAS NINJAS,MTV,RICK AND MORTY,LIVERPOOL,ARSENAL,FLASH,MULHER MARAVILHA,FIFA,MENINAS SUPERPODEROSAS,LIGA DA JUSTIÇA,DC ORIGINALS,DC SUPER FRIENDS,DC SUPER HERO GIRLS,SHREK,A CASA MÁGICA DA GABY,JURASSIC WORLD,ONDE ESTÁ WALLY,TROLLS,BARCELONA,BAYERN DE MUNIQUE,PARIS SAINT GERMAIN,MANCHESTER CITY,NFL,PAC MAN,TURMA DA MATA,TURMA DO NEYMAR JR.,SIMPSONS,NEYMAR JR.,BRASIL'
         
+        baixar_TaVisitasSite(driver, domainbg, domainlp, domainin, domainses, domaingo), time.sleep(3) 
         baixar_visao_geral_dominio(driver, domainbg), time.sleep(3)
         baixar_LacunasBacklinks(driver, domainbg, domainlp, domainin, domainses, domaingo), time.sleep(3)
         baixar_LacunasPalavrasChave(driver, domainbg, domainlp, domainin, domainses, domaingo), time.sleep(3)
-        baixar_TaVisitasSite(driver, domainbg, domainlp, domainin, domainses, domaingo), time.sleep(3)
         baixar_TaJornadaTrafego(driver, domainbg, domainlp, domainin, domainses, domaingo), time.sleep(3)
         baixar_VisaoGeralPalavrasChave(driver, personagens), time.sleep(3)
         baixar_VisaoGeralPalavrasChave2(driver, personagens2), time.sleep(3)

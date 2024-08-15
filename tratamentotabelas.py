@@ -1,9 +1,9 @@
 import os
 import pandas as pd
 import shutil
-import glob
 from datetime import datetime
 from openpyxl import load_workbook
+
 
 # Lista de subdiretórios a serem processados
 SUBDIRETORIOS = [
@@ -389,6 +389,37 @@ def preencher_celulas_vazias_com_zero(arquivo_saida):
         print(f"Erro ao preencher células vazias: {e}")
 
 
+def adicionar_data_extracao(arquivo_saida):
+    """Adiciona a coluna 'Data_Extração' com a data atual em todas as abas do arquivo Excel sem recriar abas."""
+    data_extracao = datetime.now().strftime('%Y-%m-%d')
+    print(f"Adicionando coluna 'Data_Extracao' com a data: {data_extracao}")
+
+    try:
+        # Carregar o arquivo Excel existente
+        workbook = load_workbook(arquivo_saida)
+
+        # Iterar sobre todas as abas do arquivo
+        for sheetname in workbook.sheetnames:
+            sheet = workbook[sheetname]
+
+            # Verificar se a coluna 'Data_Extração' já existe
+            if 'Data_Extracao' not in [cell.value for cell in sheet[1]]:
+                # Adicionar a coluna 'Data_Extração' em todas as linhas
+                col_index = sheet.max_column + 1  # Próxima coluna disponível
+                sheet.cell(row=1, column=col_index).value = 'Data_Extracao'
+                
+                for row in range(2, sheet.max_row + 1):
+                    # Adiciona a data no formato datetime para garantir compatibilidade com SQL
+                    sheet.cell(row=row, column=col_index).value = datetime.now()
+
+        # Salvar o arquivo com as mudanças
+        workbook.save(arquivo_saida)
+        print("Coluna 'Data_Extracao' adicionada com sucesso a todas as abas.")
+
+    except Exception as e:
+        print(f"Erro ao adicionar a coluna 'Data_Extracao': {e}")
+
+
 def main():
     caminho_atual = os.path.abspath(os.path.dirname(__file__))
     diretorio_saida = os.path.join(caminho_atual, "ExcelTratado")
@@ -409,6 +440,8 @@ def main():
     transformar_visao_geral_dominio(arquivo_saida)
     apagar_aba(arquivo_saida, "VisaoGeralPalavrasChave2")
     preencher_celulas_vazias_com_zero(arquivo_saida)
+    adicionar_data_extracao(arquivo_saida)
+    apagar_arquivos(SUBDIRETORIOS)
     
     # Aplicar a conversão da coluna 'Mes' para data nas abas especificadas
     converter_coluna_mes_para_data(arquivo_saida, "MediaDuracaoVisita")
