@@ -1,6 +1,4 @@
-# UTILIZANDO VERSAO CHROME 127
-# pip install selenium pandas openpyxl
-
+# CHROME 127
 
 try: # Tenta importar as bibliotecas necessárias
     import os  # Biblioteca para manipulação do sistema operacional

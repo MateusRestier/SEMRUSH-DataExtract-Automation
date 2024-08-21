@@ -45,7 +45,6 @@ def insert_data_from_df(connection, df, tabela_banco):
     except pyodbc.Error as e:
         print(f"Erro ao inserir dados na tabela {tabela_banco}: {e}")
 
-
 def remove_duplicatas(connection):
     print('REMOVENDO DATAS DUPLICADAS DAS TABELAS ABAIXO')
     tabelas = {
@@ -82,11 +81,11 @@ def remove_duplicatas(connection):
 
 def job():
     driver = "ODBC Driver 17 for SQL Server"
-    server = "00"  # Substitua pelo seu servidor
-    user = "00"  # Substitua pelo seu usuário
-    password = "00"  # Substitua pela sua senha
-    database = "00"
-    port = 00
+    server = ""  # Substitua pelo seu servidor
+    user = ""  # Substitua pelo seu usuário
+    password = ""  # Substitua pela sua senha
+    database = ""
+    port = 000000
 
     connection = create_connection(driver, server, database, user, password, port)
 
@@ -195,11 +194,14 @@ def job():
             }
             
             for aba, tabela in abas_tabelas.items():
-                df = pd.read_excel(caminho_excel, sheet_name=aba)
-                if tabela in column_mappings:
-                    df = clean_and_convert_dataframe(df, column_mappings[aba], {})
+                try:
+                    df = pd.read_excel(caminho_excel, sheet_name=aba)
+                    if tabela in column_mappings:
+                        df = clean_and_convert_dataframe(df, column_mappings[aba], {})
                     
-                insert_data_from_df(connection, df, tabela)
+                    insert_data_from_df(connection, df, tabela)
+                except Exception as e:
+                    print(f"Erro ao processar a aba '{aba}' para a tabela '{tabela}': {e}")
         else:
             print(f"Arquivo {caminho_excel} não encontrado.")
     else:
@@ -210,3 +212,4 @@ def job():
 
 if __name__ == "__main__":
     job()
+
